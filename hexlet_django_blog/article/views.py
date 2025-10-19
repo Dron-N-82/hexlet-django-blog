@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 # from django.http import HttpResponse
@@ -17,6 +17,16 @@ class IndexView(View):
         context = {"articles": articles}
         return render(request, "articles/index.html", context)
 
+class ArticleView(View):
+    def get(self, request, *args, **kwargs):
+        article = get_object_or_404(Article, id=kwargs["id"])
+        return render(
+            request,
+            "articles/show.html",
+            context={
+                "article": article,
+            },
+        )
 # class IndexView(View):
 #     def get(self, request):
 #         context = {"app": "article"}
