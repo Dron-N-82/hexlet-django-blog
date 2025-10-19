@@ -5,8 +5,8 @@ from hexlet_django_blog.article import views
 
 urlpatterns = [
     # path("", views.index, name='index'),
-    path("", views.home, name='home'),
-    # path('', IndexView.as_view()),
-    path('<str:tags>/<int:article_id>/', IndexView.as_view(), name='article'),
+    # path("", views.home, name='home'),
+    path('', IndexView.as_view()),
+    # path('<str:tags>/<int:article_id>/', IndexView.as_view(), name='article'),
     # path('<str:tags>/<int:article_id>/', views.index, name='article'),
 ]

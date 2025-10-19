@@ -3,30 +3,38 @@ from django.shortcuts import render
 # Create your views here.
 # from django.http import HttpResponse
 from django.views import View
-from django.shortcuts import redirect
-from django.urls import reverse
+# from django.shortcuts import redirect
+# from django.urls import reverse
+
+from hexlet_django_blog.article.models import Article
 
 # def index(request):
 #     return HttpResponse("article")
+
+class IndexView(View):
+    def get(self, request, *args, **kwargs):
+        articles = Article.objects.all()[:15]
+        context = {"articles": articles}
+        return render(request, "articles/index.html", context)
 
 # class IndexView(View):
 #     def get(self, request):
 #         context = {"app": "article"}
 #         return render(request, "articles/index.html", context)
 
-class IndexView(View):
-    def get(self, request, tags, article_id):
-        context = {"tags": tags, "article_id": article_id}
-        return render(request, "articles/index.html", context)
+# class IndexView(View):
+#     def get(self, request, tags, article_id):
+#         context = {"tags": tags, "article_id": article_id}
+#         return render(request, "articles/index.html", context)
 
 
 # def index(request, tags, article_id):
 #     return HttpResponse(f'Статья номер {article_id}. Тег {tags}')
 
 
-def home(request):
-    url = reverse('article', kwargs={'tags': 'python', 'article_id': 42})
-    return redirect(url)
+# def home(request):
+#     url = reverse('article', kwargs={'tags': 'python', 'article_id': 42})
+#     return redirect(url)
 
 # class IndexView(View):
 #     def get(self, request):
