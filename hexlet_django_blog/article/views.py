@@ -1,12 +1,14 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 
 # Create your views here.
 # from django.http import HttpResponse
 from django.views import View
 # from django.shortcuts import redirect
-# from django.urls import reverse
-
+from django.urls import reverse
+from .forms import ArticleForm
+#from .models import ArticleComment
 from hexlet_django_blog.article.models import Article
+from django.contrib import messages
 
 # def index(request):
 #     return HttpResponse("article")
@@ -56,3 +58,52 @@ class ArticleView(View):
     # def get(self, request):
         # return HttpResponse("article")
     
+class CreateArticleView(View):
+    # если метод POST, то мы обрабатываем данные
+    def post(self, request, *args, **kwargs):
+        form = ArticleForm(request.POST)  # Получаем данные формы из запроса
+        if form.is_valid():  # Проверяем данные формы на корректность
+            form.save()
+            return redirect(reverse('index'))
+        else:
+            return render(request, "articles/create.html", {"form": form})
+        
+
+    # если метод GET, то создаем пустую форму
+    def get(self, request, *args, **kwargs):
+        form = ArticleForm()  # Создаем экземпляр нашей формы
+        return render(
+            request, "articles/create.html", {"form": form}
+        )  # Передаем нашу форму в контексте
+
+
+class ArticleFormEditView(View):
+    def get(self, request, *args, **kwargs):
+        article_id = kwargs.get("id")
+        article = Article.objects.get(id=article_id)
+        form = ArticleForm(instance=article)
+        return render(
+            request, "articles/update.html", {"form": form, "article_id": article_id}
+        )
+    
+    def post(self, request, *args, **kwargs):
+        article_id = kwargs.get("id")
+        article = Article.objects.get(id=article_id)
+        form = ArticleForm(request.POST, instance=article)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Статья обновлена.")
+            return redirect(reverse("index"))
+        
+        messages.error(request, 'Произошла ошибка при сохранении.')
+        return render(
+            request, "articles/update.html", {"form": form, "article_id": article_id}
+        )
+
+class ArticleFormDeleteView(View):
+    def post(self, request, *args, **kwargs):
+        article_id = kwargs.get("id")
+        article = Article.objects.get(id=article_id)
+        if article:
+            article.delete()
+        return redirect(reverse('index'))
